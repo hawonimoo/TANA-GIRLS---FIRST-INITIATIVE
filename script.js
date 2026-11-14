@@ -1,516 +1,269 @@
-```javascript
 /* =====================================================
-   MOBILE MENU
+   TANA GIRLS FIRST INITIATIVE - JAVASCRIPT
+   "Voice of the Voiceless"
 ===================================================== */
 
-const menuToggle =
-    document.getElementById("menuToggle");
+document.addEventListener("DOMContentLoaded", function () {
 
-const mainNav =
-    document.getElementById("mainNav");
+    /* =====================================================
+       1. MOBILE MENU NAVIGATION
+    ===================================================== */
+    const menuToggle = document.getElementById("menuToggle");
+    const navLinks = document.getElementById("navLinks");
 
+    if (menuToggle && navLinks) {
+        menuToggle.addEventListener("click", function (e) {
+            e.stopPropagation();
+            const isOpen = navLinks.classList.toggle("active");
+            menuToggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
+            menuToggle.innerHTML = isOpen ? "&times;" : "&#9776;";
+        });
 
-if (menuToggle && mainNav) {
+        // Close when clicking any nav link
+        navLinks.querySelectorAll("a").forEach(function (link) {
+            link.addEventListener("click", function () {
+                navLinks.classList.remove("active");
+                menuToggle.setAttribute("aria-expanded", "false");
+                menuToggle.innerHTML = "&#9776;";
+            });
+        });
 
-    menuToggle.addEventListener(
-        "click",
-        function () {
-
-            mainNav.classList.toggle("show");
-
-        }
-    );
-
-
-    mainNav.querySelectorAll("a").forEach(
-        function (link) {
-
-            link.addEventListener(
-                "click",
-                function () {
-
-                    mainNav.classList.remove("show");
-
-                }
-            );
-
-        }
-    );
-
-}
-
-
-/* =====================================================
-   HOME CAROUSEL
-===================================================== */
-
-const carouselTrack =
-    document.getElementById("carouselTrack");
-
-const slides =
-    document.querySelectorAll(".carousel-slide");
-
-const previousBtn =
-    document.getElementById("previousBtn");
-
-const dotsContainer =
-    document.getElementById("carouselDots");
-
-let currentSlide = 0;
-
-let carouselTimer;
+        // Close when clicking outside of navbar
+        document.addEventListener("click", function (event) {
+            if (!navLinks.contains(event.target) && !menuToggle.contains(event.target)) {
+                navLinks.classList.remove("active");
+                menuToggle.setAttribute("aria-expanded", "false");
+                menuToggle.innerHTML = "&#9776;";
+            }
+        });
+    }
 
 
-/* CREATE DOTS */
+    /* =====================================================
+       2. HOME ACTIVITY CAROUSEL
+    ===================================================== */
+    const carouselTrack = document.getElementById("carouselTrack");
+    const slides = document.querySelectorAll(".carousel-slide");
+    const previousBtn = document.getElementById("previousBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    const dotsContainer = document.getElementById("carouselDots");
+    const homeCarousel = document.querySelector(".home-carousel");
 
-if (dotsContainer && slides.length > 0) {
+    let currentSlide = 0;
+    let carouselTimer = null;
 
-    slides.forEach(
-        function (slide, index) {
-
-            const dot =
-                document.createElement("button");
-
+    // Dynamically build dot indicators
+    if (dotsContainer && slides.length > 0) {
+        dotsContainer.innerHTML = "";
+        slides.forEach(function (_, index) {
+            const dot = document.createElement("button");
             dot.classList.add("carousel-dot");
+            if (index === 0) dot.classList.add("active");
+            dot.setAttribute("type", "button");
+            dot.setAttribute("aria-label", "Go to slide " + (index + 1));
 
-            dot.setAttribute(
-                "aria-label",
-                "Go to slide " + (index + 1)
-            );
-
-            dot.addEventListener(
-                "click",
-                function () {
-
-                    currentSlide = index;
-
-                    updateCarousel();
-
-                    restartCarousel();
-
-                }
-            );
+            dot.addEventListener("click", function () {
+                currentSlide = index;
+                updateCarousel();
+                restartCarousel();
+            });
 
             dotsContainer.appendChild(dot);
-
-        }
-    );
-
-}
-
-
-const dots =
-    document.querySelectorAll(".carousel-dot");
-
-
-/* UPDATE CAROUSEL */
-
-function updateCarousel() {
-
-    if (!carouselTrack || slides.length === 0) {
-        return;
+        });
     }
 
+    const dots = document.querySelectorAll(".carousel-dot");
 
-    carouselTrack.style.transform =
-        "translateX(-" +
-        (currentSlide * 100) +
-        "%)";
+    function updateCarousel() {
+        if (!carouselTrack || slides.length === 0) return;
 
+        carouselTrack.style.transform = "translateX(-" + (currentSlide * 100) + "%)";
 
-    dots.forEach(
-        function (dot, index) {
-
-            dot.classList.toggle(
-                "active",
-                index === currentSlide
-            );
-
-        }
-    );
-
-}
-
-
-/* NEXT */
-
-function nextSlide() {
-
-    currentSlide++;
-
-    if (currentSlide >= slides.length) {
-
-        currentSlide = 0;
-
+        dots.forEach(function (dot, index) {
+            dot.classList.toggle("active", index === currentSlide);
+        });
     }
 
-    updateCarousel();
-
-}
-
-
-/* PREVIOUS */
-
-function previousSlide() {
-
-    currentSlide--;
-
-    if (currentSlide < 0) {
-
-        currentSlide =
-            slides.length - 1;
-
+    function nextSlide() {
+        currentSlide = (currentSlide + 1) % slides.length;
+        updateCarousel();
     }
 
-    updateCarousel();
+    function previousSlide() {
+        currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+        updateCarousel();
+    }
 
-}
-
-
-/* PREVIOUS BUTTON ONLY */
-
-if (previousBtn) {
-
-    previousBtn.addEventListener(
-        "click",
-        function () {
-
+    if (previousBtn) {
+        previousBtn.addEventListener("click", function () {
             previousSlide();
-
             restartCarousel();
-
-        }
-    );
-
-}
-
-
-/* =====================================================
-   AUTOMATIC SLIDE
-===================================================== */
-
-function startCarousel() {
-
-    if (slides.length <= 1) {
-        return;
+        });
     }
 
-    carouselTimer =
-        setInterval(
-            nextSlide,
-            5000
-        );
+    if (nextBtn) {
+        nextBtn.addEventListener("click", function () {
+            nextSlide();
+            restartCarousel();
+        });
+    }
 
-}
+    function startCarousel() {
+        if (slides.length <= 1) return;
+        clearInterval(carouselTimer);
+        carouselTimer = setInterval(nextSlide, 5000);
+    }
 
+    function restartCarousel() {
+        clearInterval(carouselTimer);
+        startCarousel();
+    }
 
-function restartCarousel() {
+    // Pause on hover
+    if (homeCarousel) {
+        homeCarousel.addEventListener("mouseenter", function () {
+            clearInterval(carouselTimer);
+        });
 
-    clearInterval(carouselTimer);
+        homeCarousel.addEventListener("mouseleave", function () {
+            startCarousel();
+        });
 
+        // Touch swipe gestures for mobile screens
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        homeCarousel.addEventListener("touchstart", function (e) {
+            touchStartX = e.changedTouches[0].screenX;
+        }, { passive: true });
+
+        homeCarousel.addEventListener("touchend", function (e) {
+            touchEndX = e.changedTouches[0].screenX;
+            const diff = touchStartX - touchEndX;
+            if (diff > 45) {
+                nextSlide();
+                restartCarousel();
+            } else if (diff < -45) {
+                previousSlide();
+                restartCarousel();
+            }
+        }, { passive: true });
+    }
+
+    updateCarousel();
     startCarousel();
 
-}
 
+    /* =====================================================
+       3. GALLERY LIGHTBOX
+    ===================================================== */
+    const galleryItems = document.querySelectorAll(".gallery-item");
+    const lightbox = document.getElementById("lightbox");
+    const lightboxImage = document.getElementById("lightboxImage");
+    const lightboxCaption = document.getElementById("lightboxCaption");
+    const lightboxClose = document.getElementById("lightboxClose");
 
-updateCarousel();
+    if (lightbox && lightboxImage) {
+        galleryItems.forEach(function (item) {
+            item.addEventListener("click", function () {
+                const img = item.querySelector("img");
+                const caption = item.querySelector(".gallery-caption");
 
-startCarousel();
+                if (!img) return;
 
-
-/* PAUSE WHEN MOUSE IS OVER CAROUSEL */
-
-const homeCarousel =
-    document.querySelector(".home-carousel");
-
-
-if (homeCarousel) {
-
-    homeCarousel.addEventListener(
-        "mouseenter",
-        function () {
-
-            clearInterval(carouselTimer);
-
-        }
-    );
-
-
-    homeCarousel.addEventListener(
-        "mouseleave",
-        function () {
-
-            startCarousel();
-
-        }
-    );
-
-}
-
-
-/* =====================================================
-   LIGHTBOX
-===================================================== */
-
-const galleryImages =
-    document.querySelectorAll(
-        ".gallery-item img"
-    );
-
-const lightbox =
-    document.getElementById("lightbox");
-
-const lightboxImage =
-    document.getElementById("lightboxImage");
-
-const lightboxCaption =
-    document.getElementById("lightboxCaption");
-
-const lightboxClose =
-    document.getElementById("lightboxClose");
-
-
-galleryImages.forEach(
-    function (image) {
-
-        image.addEventListener(
-            "click",
-            function () {
-
-                if (!lightbox || !lightboxImage) {
-                    return;
-                }
-
-
-                lightboxImage.src =
-                    image.src;
-
-                lightboxImage.alt =
-                    image.alt;
-
-
-                const caption =
-                    image.parentElement.querySelector(
-                        ".gallery-caption"
-                    );
-
-
-                if (caption) {
-
-                    lightboxCaption.textContent =
-                        caption.textContent;
-
-                } else {
-
-                    lightboxCaption.textContent =
-                        image.alt;
-
-                }
-
+                lightboxImage.src = img.src;
+                lightboxImage.alt = img.alt || "Gallery image";
+                lightboxCaption.textContent = caption ? caption.textContent.trim() : (img.alt || "");
 
                 lightbox.classList.add("show");
+                lightbox.setAttribute("aria-hidden", "false");
+                document.body.style.overflow = "hidden";
+            });
+        });
 
-                lightbox.setAttribute(
-                    "aria-hidden",
-                    "false"
-                );
+        function closeLightbox() {
+            lightbox.classList.remove("show");
+            lightbox.setAttribute("aria-hidden", "true");
+            document.body.style.overflow = "";
+        }
 
-                document.body.style.overflow =
-                    "hidden";
+        if (lightboxClose) {
+            lightboxClose.addEventListener("click", closeLightbox);
+        }
 
-            }
-        );
-
-    }
-);
-
-
-/* CLOSE BUTTON */
-
-if (lightboxClose) {
-
-    lightboxClose.addEventListener(
-        "click",
-        closeLightbox
-    );
-
-}
-
-
-/* CLOSE FUNCTION */
-
-function closeLightbox() {
-
-    if (!lightbox) {
-        return;
-    }
-
-    lightbox.classList.remove("show");
-
-    lightbox.setAttribute(
-        "aria-hidden",
-        "true"
-    );
-
-    document.body.style.overflow =
-        "";
-
-}
-
-
-/* CLICK OUTSIDE IMAGE */
-
-if (lightbox) {
-
-    lightbox.addEventListener(
-        "click",
-        function (event) {
-
-            if (
-                event.target === lightbox
-            ) {
-
+        lightbox.addEventListener("click", function (event) {
+            if (event.target === lightbox) {
                 closeLightbox();
-
             }
+        });
 
-        }
-    );
-
-}
-
-
-/* ESCAPE KEY */
-
-document.addEventListener(
-    "keydown",
-    function (event) {
-
-        if (event.key === "Escape") {
-
-            closeLightbox();
-
-        }
-
+        document.addEventListener("keydown", function (event) {
+            if (event.key === "Escape" && lightbox.classList.contains("show")) {
+                closeLightbox();
+            }
+        });
     }
-);
 
 
-/* =====================================================
-   CONTACT FORM
-===================================================== */
+    /* =====================================================
+       4. CONTACT FORM VALIDATION & FEEDBACK
+    ===================================================== */
+    const contactForm = document.getElementById("contactForm");
+    const formMessage = document.getElementById("formMessage");
 
-const contactForm =
-    document.getElementById("contactForm");
-
-const formMessage =
-    document.getElementById("formMessage");
-
-
-if (contactForm) {
-
-    contactForm.addEventListener(
-        "submit",
-        function (event) {
-
+    if (contactForm && formMessage) {
+        contactForm.addEventListener("submit", function (event) {
             event.preventDefault();
 
+            const nameInput = document.getElementById("name");
+            const emailInput = document.getElementById("email");
+            const messageInput = document.getElementById("message");
 
-            const name =
-                document
-                    .getElementById("name")
-                    .value
-                    .trim();
+            const name = nameInput ? nameInput.value.trim() : "";
+            const email = emailInput ? emailInput.value.trim() : "";
+            const message = messageInput ? messageInput.value.trim() : "";
 
-
-            const email =
-                document
-                    .getElementById("email")
-                    .value
-                    .trim();
-
-
-            const message =
-                document
-                    .getElementById("message")
-                    .value
-                    .trim();
-
-
-            if (
-                name === "" ||
-                email === "" ||
-                message === ""
-            ) {
-
-                formMessage.textContent =
-                    "Please fill in all fields.";
-
+            if (!name || !email || !message) {
+                formMessage.textContent = "Please fill in all fields before sending.";
+                formMessage.className = "form-message error";
                 return;
-
             }
 
-
-            formMessage.textContent =
-                "Thank you for contacting Tana Girls First Initiative. Your message has been received on this page.";
-
-
+            formMessage.textContent = "Thank you, " + name + "! Your message has been received. We will get in touch with you shortly.";
+            formMessage.className = "form-message success";
             contactForm.reset();
+        });
+    }
 
-        }
+
+    /* =====================================================
+       5. SCROLL REVEAL ANIMATIONS
+    ===================================================== */
+    const animatedElements = document.querySelectorAll(
+        ".work-card, .team-card, .gallery-item, .impact-item, .about-highlights div, .intro-card"
     );
 
-}
-
-
-/* =====================================================
-   SCROLL ANIMATION
-===================================================== */
-
-const animatedElements =
-    document.querySelectorAll(
-        ".work-card, .team-card, .gallery-item, .impact-item"
-    );
-
-
-if (
-    "IntersectionObserver" in window
-) {
-
-    const observer =
-        new IntersectionObserver(
+    if ("IntersectionObserver" in window) {
+        const observer = new IntersectionObserver(
             function (entries) {
-
-                entries.forEach(
-                    function (entry) {
-
-                        if (
-                            entry.isIntersecting
-                        ) {
-
-                            entry.target.classList.add(
-                                "visible"
-                            );
-
-                        }
-
+                entries.forEach(function (entry) {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add("visible");
+                        observer.unobserve(entry.target);
                     }
-                );
-
+                });
             },
-            {
-                threshold: 0.15
-            }
+            { threshold: 0.1 }
         );
 
-
-    animatedElements.forEach(
-        function (element) {
-
+        animatedElements.forEach(function (element) {
             observer.observe(element);
+        });
+    } else {
+        // Fallback for older browsers
+        animatedElements.forEach(function (element) {
+            element.classList.add("visible");
+        });
+    }
 
-        }
-    );
-
-}
-```
+});

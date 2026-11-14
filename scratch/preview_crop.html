@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+body { background: #f0f4f8; font-family: sans-serif; padding: 20px; }
+.grid { display: flex; gap: 20px; flex-wrap: wrap; }
+.card { width: 220px; background: white; padding: 12px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); text-align: center; }
+.frame {
+    width: 100%;
+    aspect-ratio: 1 / 1.15;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #e2eef4;
+    border: 3px solid #fff;
+    outline: 1.5px solid #d4e6ef;
+    position: relative;
+}
+.img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+.img-hawo {
+    transform: scale(1.6);
+    transform-origin: 50% 18%;
+}
+.img-khadija {
+    transform: scale(2.65);
+    transform-origin: 51% 21%;
+}
+.img-zaitun {
+    transform: scale(1.65);
+    transform-origin: 50% 64%;
+}
+.img-malika {
+    transform: scale(1.55);
+    transform-origin: 52% 20%;
+}
+.img-james {
+    transform: scale(1.6);
+    transform-origin: 50% 22%;
+}
+h4 { margin: 10px 0 2px; }
+p { font-size: 13px; color: #666; margin: 0; }
+</style>
+</head>
+<body>
+<h2>Crop Test - Cut at Breast Level</h2>
+<div class="grid">
+    <div class="card">
+        <div class="frame"><img src="hawo.jpeg" class="img img-hawo"></div>
+        <h4>Hawo Nimoo Farah</h4><p>Founder & CEO</p>
+    </div>
+    <div class="card">
+        <div class="frame"><img src="khadija.jpeg" class="img img-khadija"></div>
+        <h4>Kadija Ismail</h4><p>Chairlady</p>
+    </div>
+    <div class="card">
+        <div class="frame"><img src="zaitun.jpeg" class="img img-zaitun"></div>
+        <h4>Zaitun Farah</h4><p>Secretary</p>
+    </div>
+    <div class="card">
+        <div class="frame"><img src="malika.jpeg" class="img img-malika"></div>
+        <h4>Malika Barisa</h4><p>Treasurer</p>
+    </div>
+    <div class="card">
+        <div class="frame"><img src="james.jpeg" class="img img-james"></div>
+        <h4>James Jackson</h4><p>Online Manager</p>
+    </div>
+</div>
+</body>
+</html>
